@@ -54,6 +54,7 @@ public class SensorReceiver : MonoBehaviour
 
     public Camera targetCamera;
     public bool editable;
+    public bool verboseDebug = false;
 
     private float width;
     private float height;
@@ -206,6 +207,11 @@ public class SensorReceiver : MonoBehaviour
                 {
                     Debug.LogWarning($"受信サイズ不正: {data?.Length ?? 0} bytes");
                     continue;
+                }
+
+                if (verboseDebug)
+                {
+                    Debug.Log($"UDP 受信: {data.Length} bytes from {remoteEP.Address}:{remoteEP.Port}");
                 }
 
                 // 2バイトで1点
@@ -545,7 +551,7 @@ public class SensorReceiver : MonoBehaviour
     // ================= レンダリング =================
     void OnEnable() { RenderPipelineManager.beginCameraRendering += OnBeginCameraRendering; }
     void OnDisable() { RenderPipelineManager.beginCameraRendering -= OnBeginCameraRendering; }
-    void OnBeginCameraRendering(ScriptableRenderContext context, Camera camera) 
+    void OnBeginCameraRendering(ScriptableRenderContext context, Camera camera)
     { currentCamera = camera; }
 
     void OnRenderObject()
@@ -640,7 +646,7 @@ public class SensorReceiver : MonoBehaviour
     {
         if (!File.Exists(filePath)) return;
         var data = File.ReadAllLines(filePath);
-        if (data.Length >= 6)
+        if (data.Length >= 8)
         {
             sensorPosition = new Vector2(float.Parse(data[0]), float.Parse(data[1]));
             sensorRotation = float.Parse(data[2]);

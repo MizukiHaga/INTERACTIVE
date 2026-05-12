@@ -19,7 +19,7 @@ public class WarpPoint : MonoBehaviour
         else if (other.attachedRigidbody != null)
         {
             other.attachedRigidbody.position = pos;
-            other.attachedRigidbody.linearVelocity = Vector3.zero;
+            other.attachedRigidbody.velocity = Vector3.zero;
             other.attachedRigidbody.angularVelocity = Vector3.zero;
         }
         else

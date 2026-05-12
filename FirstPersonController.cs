@@ -32,6 +32,11 @@ public class FirstPersonController : MonoBehaviour
     bool jumpRequested = false;           // このフレームでジャンプ開始するか
     float pendingLookDx = 0f;             // 左右視点回転の集計値（複数点を1回で反映するため）
 
+    public Transform FirstWarpTarget; // ワープ先のターゲット位置
+    public Transform SecondWarpTarget; // 2つ目のワープ先のターゲット位置
+    public Transform ThirdWarpTarget; // 3つ目のワープ先のターゲット位置（Inspectorで指定）
+    public Transform FourthWarpTarget; // 4つ目のワープ先のターゲット位置（Inspectorで指定）
+    public Transform FifthWarpTarget; // 5つ目のワープ先のターゲット位置（Inspectorで指定）
     void Awake()
     {
         // === 初期化処理 ===
@@ -224,17 +229,37 @@ public class FirstPersonController : MonoBehaviour
         Cursor.visible = true;
     }
 
-    // 外部から安全にテレポートするための API
-    public void TeleportTo(Vector3 position)
+    void OnTriggerEnter(Collider other)
     {
-        controller.enabled = false;
-        transform.position = position;
-        controller.enabled = true;
-
-        // 移動・重力状態をリセットして、Update の次フレームで位置が上書きされないようにする
-        verticalVelocity = 0f;
-        moveInput = 0f;
-        jumpRequested = false;
-        pendingLookDx = 0f;
+        if (other.CompareTag("WarpTrigger"))
+        {
+            controller.enabled = false; // プレイヤーのコントローラーを無効化
+            if(other.name == "To1st")
+            {
+                transform.position = FirstWarpTarget.position;
+            }
+            else if(other.name == "To2nd")
+            {
+                transform.position = SecondWarpTarget.position;
+            }
+            else if(other.name == "To3rd")
+            {
+                transform.position = ThirdWarpTarget.position;
+            }
+            else if(other.name == "To4th")
+            {
+                transform.position = FourthWarpTarget.position;
+            }
+            else if(other.name == "To5th")
+            {
+                transform.position = FifthWarpTarget.position;
+            }
+            controller.enabled = true; // プレイヤーのコントローラーを再度有効化
+            // ワープポイントに移動する
+            // controller.enabled = false; // プレイヤーのコントローラーを無効化
+            // transform.position = warpTarget.position;
+            // controller.enabled = true; // プレイヤーのコントローラーを再度有効化
+            Debug.Log("ワープしました！"); // デバッグ用のログ
+        }
     }
 }
