@@ -6,6 +6,10 @@ public class SensorTouchTrigger : MonoBehaviour
     // MoveSceneFunctionsが入っているオブジェクトを指定します
     public MoveSceneFunctions moveSceneFunctions;
 
+    public enum ActionType { GameStart, MoveTitle }
+    [Header("動作タイプ（Inspectorで選択）")]
+    public ActionType action = ActionType.GameStart;
+
     [Header("ボタンの反応範囲 (x, y, width, height)")]
     public Rect touchArea = new Rect(700, 400, 500, 300);
 
@@ -50,8 +54,19 @@ public class SensorTouchTrigger : MonoBehaviour
             // 検知した位置(p.position)が、設定した範囲内か判定
             if (touchArea.Contains(p.position))
             {
-                Debug.Log("センサーがボタン範囲内で反応しました");
-                moveSceneFunctions.GameStartFunction();
+                Debug.Log($"センサーがボタン範囲内で反応しました (action={action})");
+                if (moveSceneFunctions != null)
+                {
+                    switch (action)
+                    {
+                        case ActionType.GameStart:
+                            moveSceneFunctions.GameStartFunction();
+                            break;
+                        case ActionType.MoveTitle:
+                            moveSceneFunctions.MoveTitle();
+                            break;
+                    }
+                }
                 break;
             }
         }
