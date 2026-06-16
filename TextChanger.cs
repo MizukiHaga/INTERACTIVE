@@ -7,13 +7,13 @@ public class TextChanger : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        if (GameManager.Clear == true && TouchGameOver.Caught == false)
+        if (GameManager.Clear == true && MoveSceneFunctions.Caught == false)
         {
             TextField.text = "GameClear";
             TextField.gameObject.SetActive(true);
             Debug.Log("GameClear");
         }
-        else if (GameManager.Clear == false && TouchGameOver.Caught == true)
+        else if (GameManager.Clear == false && MoveSceneFunctions.Caught == true)
         {
             TextField.text = "GameOver";
             TextField.gameObject.SetActive(true);

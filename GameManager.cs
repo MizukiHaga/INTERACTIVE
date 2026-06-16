@@ -19,7 +19,7 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        TouchGameOver.Caught = false;
+        MoveSceneFunctions.Caught = false;
         GameManager.Clear = false;
         audioSource = GetComponents<AudioSource>();
         audioSource[1].loop = true;
@@ -69,14 +69,14 @@ public class GameManager : MonoBehaviour
     // �Q�[���N���A���̏���
     private void GameClear()
     {
-        Debug.Log("�Q�[���N���A�I");
         Clear = true;
+        MoveSceneFunctions.Caught = false;
         UnityEngine.SceneManagement.SceneManager.LoadScene("GameOver");
-        // ���̑��̃N���A�����i���Ԓ�~�A���͖������Ȃǁj
+        // ̑̃NAiԒ~A͖Ȃǁj
         // Time.timeScale = 0f; 
     }
 
-    // ���W���̕\���i�f�o�b�O�p�܂���UI�X�V�p�j
+    // W̕\ifobOp܂UIXVpj
     public int GetCollectedItemsCount()
     {
         return collectedItems;
