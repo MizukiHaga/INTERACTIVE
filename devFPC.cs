@@ -11,8 +11,10 @@ public class FirstPersonController : MonoBehaviour
   public float jumpHeight = 1.2f;
 
   [Header("Input")]
-  public bool useSensorInput = false;
-  public bool shiftDashToggle = true;
+  public bool useSensorInput;
+  public bool shiftDashToggle;
+  public bool enableMouseInput;
+  public bool enableKeyboardInput;
 
   [Header("View (Mouse)")]
   public Transform cameraTransform;
@@ -86,26 +88,30 @@ public class FirstPersonController : MonoBehaviour
     jumpRequested = false; // ジャンプ要求
     pendingLookDx = 0f;    // 左右視点回転
 
-    // [ステップ2.5] マウスによる視点操作（横回転はTransform、縦回転はカメラに反映）
-    float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
-    float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime * (invertY ? 1f : -1f);
+    // [ステップ2.5] マウスによる視点操作（必要なときだけ有効化）
+    if (enableMouseInput)
+    {
+      float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
+      float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime * (invertY ? 1f : -1f);
 
-    // 横回転（ワールドY軸）
-    if (Mathf.Abs(mouseX) > 0.0001f)
-      transform.Rotate(Vector3.up * mouseX);
+      // 横回転（ワールドY軸）
+      if (Mathf.Abs(mouseX) > 0.0001f)
+        transform.Rotate(Vector3.up * mouseX);
 
-    // 縦回転（カメラのピッチ）
-    cameraPitch += mouseY;
-    cameraPitch = Mathf.Clamp(cameraPitch, -90f, 89f);
-    if (cameraTransform != null)
-      cameraTransform.localEulerAngles = new Vector3(cameraPitch, 0f, 0f);
+      // 縦回転（カメラのピッチ）
+      cameraPitch += mouseY;
+      cameraPitch = Mathf.Clamp(cameraPitch, -90f, 89f);
+      if (cameraTransform != null)
+        cameraTransform.localEulerAngles = new Vector3(cameraPitch, 0f, 0f);
+    }
 
     // [ステップ3] センサー座標を処理して、moveInput, jumpRequested, pendingLookDx を更新
     if (useSensorInput)
       HandleSensorInput();
 
-    // [ステップ3.5] 開発用のキーボード入力を重ねる
-    HandleKeyboardInput();
+    // [ステップ3.5] 開発用のキーボード入力を必要時のみ重ねる
+    if (enableKeyboardInput)
+      HandleKeyboardInput();
 
     // [ステップ4] 重力・ジャンプ・移動を適用
     ApplyGravityAndMove();
@@ -327,7 +333,8 @@ public class FirstPersonController : MonoBehaviour
       {
         transform.position = FifthWarpTarget.position;
         Debug.Log("FifthWarpTarget に指定されたターゲットにワープします");
-      }else
+      }
+      else
       {
         Debug.Log("ワープトリガーの名前が不明です: " + other.name);
       }

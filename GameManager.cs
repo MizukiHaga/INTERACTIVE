@@ -55,7 +55,6 @@ public class GameManager : MonoBehaviour
     public void CollectItem()
     {
         collectedItems += 1;
-        Debug.Log("�A�C�e�����E���܂����B���݂̎��W��: " + collectedItems + " / " + requiredItemsToWin);
         audioSource[0].Play();
         // �N���A�����̃`�F�b�N
         if (collectedItems >= requiredItemsToWin)

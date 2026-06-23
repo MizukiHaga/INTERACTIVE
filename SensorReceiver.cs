@@ -54,6 +54,7 @@ public class SensorReceiver : MonoBehaviour
 
     public Camera targetCamera;
     public bool editable;
+    public bool enableManualEditing = false;
 
     private float width;
     private float height;
@@ -107,7 +108,7 @@ public class SensorReceiver : MonoBehaviour
         thread = new Thread(ReceiveData) { IsBackground = true, Name = "UST10LX-UDP-Receiver" };
         thread.Start();
 
-        editable = true; //センサーの表示を最初からオンにする
+        editable = enableManualEditing;
     }
 
     void Start()
@@ -133,9 +134,9 @@ public class SensorReceiver : MonoBehaviour
             // Debug.Log(summary);
         }
 
-        if (Input.GetKeyDown(KeyCode.Tab)) editable = !editable;
+        if (enableManualEditing && Input.GetKeyDown(KeyCode.Tab)) editable = !editable;
 
-        if (editable)
+        if (enableManualEditing && editable)
         {
             if (Input.GetMouseButtonDown(1))
             {
