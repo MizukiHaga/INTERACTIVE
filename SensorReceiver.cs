@@ -179,9 +179,13 @@ public class SensorReceiver : MonoBehaviour
     {
         try
         {
-            udp = new UdpClient(port);
+            udp?.Close();
+            udp = new UdpClient(AddressFamily.InterNetwork);
+            udp.ExclusiveAddressUse = false;
+            udp.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
             // タイムアウトを設けると終了時に抜けやすい
             udp.Client.ReceiveTimeout = 1000;
+            udp.Client.Bind(new IPEndPoint(IPAddress.Any, port));
             IPEndPoint remoteEP = new IPEndPoint(IPAddress.Any, port);
 
             while (loop)
@@ -253,9 +257,15 @@ public class SensorReceiver : MonoBehaviour
                 }
             }
         }
+        catch (SocketException se)
+        {
+            Debug.LogWarning($"UDP受信を開始できませんでした(port={port}): {se.SocketErrorCode} / {se.Message}");
+            return;
+        }
         catch (Exception e)
         {
-            Debug.LogError("UDP受信初期化エラー: " + e.Message);
+            Debug.LogWarning($"UDP受信を開始できませんでした(port={port}): {e.Message}");
+            return;
         }
     }
 
@@ -547,7 +557,7 @@ public class SensorReceiver : MonoBehaviour
     // ================= レンダリング =================
     void OnEnable() { RenderPipelineManager.beginCameraRendering += OnBeginCameraRendering; }
     void OnDisable() { RenderPipelineManager.beginCameraRendering -= OnBeginCameraRendering; }
-    void OnBeginCameraRendering(ScriptableRenderContext context, Camera camera) 
+    void OnBeginCameraRendering(ScriptableRenderContext context, Camera camera)
     { currentCamera = camera; }
 
     void OnRenderObject()
